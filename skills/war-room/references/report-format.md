@@ -8,7 +8,7 @@
 
 ## Summary
 
-Produce the report in `report_language` from `config.md` (default Thai) with English technical names, in this order:
+Produce the report in `report_language` from `config.md` (default English) with English technical names, in this order:
 
 **WAR ROOM / [date and timezone]**
 
@@ -30,7 +30,7 @@ Produce the report in `report_language` from `config.md` (default Thai) with Eng
 - **Options:** at least two when nontrivial, with expected effects, constraints, risks and trade-offs; recommend one if confidence supports it.
 - **Complexity:** dimension scores `scope / uncertainty / integration / risk / verification`, total and S/M/L/XL, confidence, reasoning. Use `Unscored` if evidence insufficient.
 - **Proposed plan:** ordered per-repo subtasks with dependencies, acceptance tests, rollout/rollback needs; **no changes executed**.
-- **Decision gate:** `READY TO PLAN | NEEDS DISCOVERY | NEEDS CLARIFICATION | BLOCKED`; one next action, owner/question if needed.
+- **Decision gate:** `READY TO PLAN | NEEDS DISCOVERY | NEEDS CLARIFICATION | BLOCKED`; one next action, owner/question if needed. For `READY TO PLAN` the next action is "take forward: grill the decisions and write the spec" (steps 10–11).
 - **Sources:** Jira issue, PR/ADR/docs, repository path:lines; source gaps explicit.
 
 For large result sets, give compact per-ticket triage rows first; expand only user-selected/high priority/uncertain tickets in detail. Do not imply uninspected tickets were fully analyzed.
@@ -41,5 +41,5 @@ For large result sets, give compact per-ticket triage rows first; expand only us
 - All Jira items shown actually came from the connected source.
 - All repository/tool coverage limitations are visible.
 - Sizes and confidence are justified and reproducible with the rubric.
-- No implementation action or Jira modification occurred.
+- No implementation action or Jira modification occurred (analysis modes; delivery modes report as `references/implement.md` describes).
 - If a gate fails, return to the necessary step or report why it cannot be resolved.

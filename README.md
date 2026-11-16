@@ -1,8 +1,8 @@
 # War-room-agent-skills
 
-`/war-room` คือ skill ของ Claude Code ที่อ่าน Jira ticket ของคุณ หาว่าต้องแก้ repo ไหน พร้อมหลักฐานจากโค้ด แล้วทำแผนงานพร้อมประเมินขนาด (S/M/L/XL) **มันอ่านอย่างเดียว ไม่แก้โค้ด ไม่แก้ Jira**
+`/war-room` คือ skill ของ Claude Code ที่รับ Jira ticket แล้วพาไปจนจบงาน: หาว่าต้องแก้ repo ไหนพร้อมหลักฐานจากโค้ด, ทำแผนพร้อมประเมินขนาด (S/M/L/XL), ถามคำถามที่ต้องตัดสินใจจนได้ spec ที่อนุมัติแล้ว, ให้ subagent เขียนโค้ดตาม spec, review แบบ senior, เก็บหลักฐาน before/after (FBI) แล้วค่อย commit เมื่อคุณตอบ yes **ไม่ push, ไม่เปิด PR, ไม่แก้ Jira**
 
-`/war-room` is a Claude Code skill that reads your Jira tickets, finds which repositories need to change (with code evidence), and produces a sized implementation plan. **It is read-only: it never edits code or Jira.**
+`/war-room` is a Claude Code skill that takes a Jira ticket from investigation to a reviewed change: it finds which repositories need to change (with code evidence), sizes the work, grills the open decisions into an approved spec, has subagents implement the spec, reviews the diff as the senior engineer, captures before/after evidence (FBI), and commits only after your yes. **It never pushes, opens a PR or edits Jira.**
 
 ## ในแพ็กเกจ / What's inside
 
@@ -10,7 +10,8 @@
 |---|---|
 | `skills/war-room/` | The skill: `SKILL.md`, references, `config.template.md` |
 | `skills/impact-analysis/` | Blast-radius analysis skill that War Room uses |
-| `agents/war-room-*.md` | 4 subagents: investigator, diagnostician, brainstormer, planner |
+| `skills/jira-read/` | Optional: downloads Jira attachments (screenshots, PDFs) so they get read |
+| `agents/war-room-*.md` | 5 subagents: investigator, diagnostician, brainstormer, planner, implementer |
 
 ## ติดตั้ง / Install
 
@@ -20,7 +21,7 @@
 git clone https://github.com/jolynestarchaser/War-room-agent-skills.git
 cd War-room-agent-skills
 mkdir -p ~/.claude/skills ~/.claude/agents
-cp -r skills/war-room skills/impact-analysis ~/.claude/skills/
+cp -r skills/war-room skills/impact-analysis skills/jira-read ~/.claude/skills/
 cp agents/war-room-*.md ~/.claude/agents/
 ```
 
@@ -30,7 +31,7 @@ PowerShell:
 git clone https://github.com/jolynestarchaser/War-room-agent-skills.git
 cd War-room-agent-skills
 New-Item -ItemType Directory -Force "$HOME\.claude\skills", "$HOME\.claude\agents" | Out-Null
-Copy-Item -Recurse skills\war-room, skills\impact-analysis "$HOME\.claude\skills\"
+Copy-Item -Recurse skills\war-room, skills\impact-analysis, skills\jira-read "$HOME\.claude\skills\"
 Copy-Item agents\war-room-*.md "$HOME\.claude\agents\"
 ```
 
@@ -44,14 +45,16 @@ If you already have a folder with the same name, back it up first; the copy over
 /war-room setup
 ```
 
-Setup checks everything and asks you for whatever is missing before any investigation starts:
+Setup interviews you (the person installing) before any investigation starts:
 
+- **Workspace** — asks whether the current folder is your workspace (where War Room keeps its files) and which folder holds your repositories.
 - **Config** — creates `.claude/war-room/config.md` in your workspace and asks for Jira site, project keys, repository list, branch rule and team rules in one message.
-- **Skills** — lists missing dependencies (below), asks, then installs them to `~/.claude/skills/`.
+- **Codebase knowledge** — asks where your team already keeps knowledge about the repositories (a knowledge base, docs, or nothing yet) and points War Room at it.
+- **Skills** — lists every missing dependency below with what it is for, asks which to install, then downloads them to `~/.claude/skills/`.
 - **Jira** — checks the connection and that the site matches your config.
-- **Codebase map** — builds `.claude/war-room/explore.md`: one Explore agent per repository summarises what it does, its routes, what it calls and its data. War Room reads this map first, then confirms in source.
+- **Codebase map** — unless your own knowledge base is the map, builds `.claude/war-room/explore.md`: one read-only agent per repository summarises what it does, its routes, what it calls and its data. War Room reads this map first, then confirms in source.
 
-`config.md` and `explore.md` describe your team's systems. They stay on your machine; do not commit or share them publicly.
+`config.md`, `explore.md` and `tickets/` describe your team's systems. They stay on your machine; do not commit or share them publicly.
 
 ## ใช้งาน / Usage
 
@@ -61,8 +64,14 @@ Setup checks everything and asks you for whatever is missing before any investig
 | `/war-room ABC-123` | One ticket |
 | `/war-room deep ABC-123` | One ticket, deeper tracing and more options |
 | `/war-room all` | All open assigned tickets, investigated in batches |
+| `/war-room implement ABC-123` | Implement an approved spec: branches, implementers, senior review |
+| `/war-room review ABC-123` | Review the current changes against the spec (e.g. in a fresh chat) |
+| `/war-room fbi ABC-123 [before\|after]` | Before/after evidence and a verdict per acceptance criterion |
 | `/war-room setup` | Setup check only |
 | `/war-room map [repo ...]` | Rebuild the codebase map (all or named repos) |
+| `/war-room maid` | Delete downloaded attachments of finished tickets (needs `jira-read`) |
+
+Flow: investigate → report → take a ticket forward → grilling → `tickets/<KEY>/spec.md` (approved) → `/war-room implement` → review → FBI → your sign-off → commit on yes → PR body drafts → `/retro`.
 
 War Room is user-invoked only: type the command; Claude will not start it on its own.
 
@@ -72,11 +81,15 @@ Setup installs these when missing (after asking). Credit to their authors.
 
 | Skill | Need | Source |
 |---|---|---|
-| `atlassian-mcp`, `feature-forge`, `spec-miner`, `debugging-wizard`, `the-fool` | required | [jeffallan/claude-skills](https://github.com/jeffallan/claude-skills) (MIT) |
+| `atlassian-mcp`, `feature-forge`, `spec-miner`, `debugging-wizard`, `the-fool`, `code-reviewer` | required | [jeffallan/claude-skills](https://github.com/jeffallan/claude-skills) (MIT) |
 | `microservices-architect`, `api-designer` | optional | [jeffallan/claude-skills](https://github.com/jeffallan/claude-skills) (MIT) |
+| `grilling`, `pr` | required | [mattpocock/skills](https://github.com/mattpocock/skills) (MIT) |
+| `retro` | optional, user-invoked | [mattpocock/skills](https://github.com/mattpocock/skills) (MIT) |
 | `buddhist-method` | required | [nai0om/buddhist-method](https://github.com/nai0om/buddhist-method) (MIT) |
-| `impact-analysis` | required | this repository |
+| `grill-me` | optional, user-invoked | [joshuawheelock/grill-me](https://github.com/joshuawheelock/grill-me) (MIT) |
+| `chrome-devtools-cli` | optional (FBI screenshots) | Claude Code plugin [chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) |
+| `impact-analysis`, `jira-read` | required / optional | this repository |
 
 ## Update
 
-Pull this repository and copy the files again (step 1). Your `config.md` and `explore.md` are not touched.
+Pull this repository and copy the files again (step 1). Your `config.md`, `explore.md` and `tickets/` are not touched.

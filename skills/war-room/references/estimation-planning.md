@@ -52,7 +52,7 @@ For each repo (including shared contracts/testing where needed), provide an orde
 
 For planning avoid writing exact diffs or prescriptive code where evidence is insufficient. Separate confirmed target files from candidate paths.
 
-Apply the team's rules from `config.md`: start each repo's work from `branch_rule`, respect every `team_rules` entry and each repo's `Repo rules` in `explore.md`, and name the `environments` where verification happens. Flag any plan step that conflicts with a rule instead of silently dropping it.
+Apply the team's rules from `config.md`: start each repo's work from `branch_rule` (or its release ref), respect every `team_rules` entry and each repo's `Repo rules` in the codebase map, and name the `environments` where verification happens. Flag any plan step that conflicts with a rule instead of silently dropping it.
 
 ## Risk and re-check
 

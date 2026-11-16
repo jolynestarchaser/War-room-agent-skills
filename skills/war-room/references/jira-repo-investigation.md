@@ -17,7 +17,8 @@ Use available authenticated Jira search tools; examples may be named Atlassian M
 - Confirm which Jira identity the tool uses. `currentUser()` resolves to the connected account, not necessarily the human running a separate shell account.
 - Capture query, timestamp, total available, returned count, pagination cursor status, and inaccessible fields.
 - For an explicit key, query by key and retrieve full details. If not assigned to the current user, do not silently drop it.
-- Avoid changing issue status, adding comments, creating tasks, or opening attachments unless needed and allowed. Access attachment *metadata* first.
+- Avoid changing issue status, adding comments or creating tasks.
+- Read the attachments that bear on the ticket (screenshots, inline images in the description or comments, spec PDFs, xlsx) with the `jira-read` skill when installed: the Atlassian MCP returns attachment metadata only. Without it, list the attachments by name and ask the user for the ones that matter. The analysis agents cannot open Jira, so pass them what each relevant file shows, cited by filename.
 
 ## Ticket facts
 
@@ -34,16 +35,24 @@ For each issue collect when available:
 
 Use only the repositories listed in `config.md`. Do **not** infer that the current working repo is the target.
 
-Start from `explore.md`: match the ticket's features, endpoints, screens and tables against each repo's `Purpose`, `Exposes`, `Calls` and `Data`, and follow the `Service graph` to neighbouring repos. This picks the candidates; the steps below confirm them in source.
+Start from the codebase map (`codebase_map` in config) and any `knowledge_sources` that bear on the ticket: match the ticket's features, endpoints, screens and tables against each repo's `Purpose`, `Exposes`, `Calls` and `Data`, and follow the `Service graph` to neighbouring repos. This picks the candidates; the steps below confirm them in source.
 
 Evidence search priority:
 
 1. Explicit Jira repository or PR/commit links (validate link belongs to the ticket or service).
-2. Maintained service catalog, repository ownership map, component-to-service map or CODEOWNERS (as evidence, not absolute proof). `explore.md` is a lead only: an entry there never makes a mapping `Confirmed` without source evidence.
+2. Maintained service catalog, repository ownership map, component-to-service map or CODEOWNERS (as evidence, not absolute proof). The codebase map is a lead only: an entry there never makes a mapping `Confirmed` without source evidence.
 3. References in issue descriptions/docs to endpoints, events, database tables, worker names, packages or UI routes.
 4. Code searches in candidate repos: API routes/consumers, symbols, schema migrations, config names, dependencies, integration tests and recent commit references.
 5. Cross-repo callers/consumers and contracts: shared schemas, clients, pub/sub consumers, generated SDKs and deployment manifests.
 6. Review alternative explanations/repositories before concluding.
+7. **Pattern to copy.** When the ticket adds a field, flag or feature like an existing one, find the latest commit that added the analogue (`git -C <path> log -S <analogous_name> --oneline -- <source globs, e.g. '*.ts' '*.py'>`, source paths only: `-S` over binary files is slow) in each repo, and record it in the spec's Facts as `Pattern to copy`.
+
+### Routed owner and release ref
+
+Both hold for every finding before it enters the report or a spec:
+
+1. **Routed owner.** For each HTTP endpoint the design calls or relies on, resolve the route (`gateway_routes` in config, or the base URL setting the caller's HTTP client uses) to its target service and cite that service's handler. A same-path controller in another repo is listed as `unrouted` and never drives a decision.
+2. **Release ref.** Record each candidate repo's checked-out branch and its **release ref**. With `release_ref_pattern` set in config, it is the top line of `git -C <path> for-each-ref --sort=-committerdate --count=3 --format='%(refname:short) %(committerdate:short)' '<release_ref_pattern>'`: pick by commit date, because branch names mislead (a `release-28` can be newer than a `release-29-v1`). Without it, the release ref is the base from `branch_rule`. A per-repo `branch_rule` exception wins over both. The working tree is often on an old ticket branch, so its lines are not evidence of what is released. The parent passes each repo's release ref in the investigator brief; investigators search it with `git grep -n <pattern> <ref> -- <paths>` and `git show <ref>:<path>` and cite `<ref>:<path>:<line>`. The parent spot-checks the cited lines, and the spec's Facts name the ref.
 
 For each affected candidate return:
 
