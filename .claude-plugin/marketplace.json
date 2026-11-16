@@ -1,0 +1,14 @@
+{
+  "name": "war-room-agent-skills",
+  "owner": {
+    "name": "jolynestarchaser"
+  },
+  "description": "War Room for Claude Code: Jira-to-reviewed-change workflow with impact analysis and Jira attachment reading.",
+  "plugins": [
+    {
+      "name": "war-room",
+      "source": "./",
+      "description": "Jira ticket to reviewed change: investigate, plan, grill a spec, implement with subagents, review, verify, commit on your yes."
+    }
+  ]
+}

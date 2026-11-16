@@ -42,7 +42,7 @@ The user's carried local changes, leave untouched: <paths from the spec Log, or 
 <Findings to fix, when this is a fix round: numbered, each with file:line>
 ```
 
-If the agent type is unavailable, run a general-purpose subagent with the `implementer_model` from config, give it the full body of `~/.claude/agents/war-room-implementer.md` as its rules, and report the fallback.
+Use the agent type the session lists (`war-room:war-room-implementer` from the plugin, or `war-room-implementer`). If neither is available, run a general-purpose subagent with the `implementer_model` from config, give it the full body of the War Room package's `agents/war-room-implementer.md` as its rules, and report the fallback.
 
 ## Review (step 14, the senior engineer)
 

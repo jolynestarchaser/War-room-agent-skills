@@ -56,7 +56,7 @@ Record the answer in `config.md` and show the changed lines. On later runs skip 
 
 ## 3. Required Skills
 
-A Skill counts as installed if it appears in this session's skill list, or its `SKILL.md` exists in `~/.claude/skills/<name>/` or `<workspace>/.claude/skills/<name>/`.
+A Skill counts as installed if it appears in this session's skill list (plugin skills appear with a prefix, e.g. `war-room:impact-analysis`), or its `SKILL.md` exists in `~/.claude/skills/<name>/` or `<workspace>/.claude/skills/<name>/`. Installed as the `war-room` plugin, `impact-analysis` and `jira-read` come with it.
 
 | Skill | Need | Used in step | Source |
 |---|---|---|---|
@@ -91,7 +91,7 @@ If any are missing:
    git clone --depth 1 https://github.com/nai0om/buddhist-method.git ~/.claude/skills/buddhist-method
    ```
 
-   For `impact-analysis` and `jira-read`, copy `skills/<name>` from the War Room package the user downloaded. If you do not know where that is, ask.
+   For `impact-analysis` and `jira-read` without the plugin, copy `skills/<name>` from the War Room package the user downloaded. If you do not know where that is, ask.
 3. Never overwrite an existing Skill folder. If a folder exists but has no `SKILL.md`, report it instead of replacing it.
 4. Confirm each `SKILL.md` now exists. Newly installed Skills may not appear in the skill list until Claude Code is restarted; say so if they do not.
 5. If the user declines a required Skill, continue only with the user's explicit agreement, and name the fallback in the report.
@@ -101,7 +101,7 @@ Then set `ariyasacca_path` in config to the first path that exists:
 
 ## 4. Custom agents
 
-Check that `war-room-investigator`, `war-room-diagnostician`, `war-room-brainstormer`, `war-room-planner` and `war-room-implementer` (delivery modes) are available (the session's agent list, or `~/.claude/agents/<name>.md`). If any are missing, tell the user to copy `agents/*.md` from the War Room package to `~/.claude/agents/` and restart Claude Code. Until then, use the fallback in SKILL.md boundary 6.
+Check that `war-room-investigator`, `war-room-diagnostician`, `war-room-brainstormer`, `war-room-planner` and `war-room-implementer` (delivery modes) are available (the session's agent list, as `war-room:<name>` from the plugin or `<name>`, or `~/.claude/agents/<name>.md`). If any are missing, tell the user to install the `war-room` plugin, or copy `agents/*.md` from the War Room package to `~/.claude/agents/`, and restart Claude Code. Until then, use the fallback in SKILL.md boundary 6.
 
 ## 5. Jira connection
 

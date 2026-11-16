@@ -15,6 +15,17 @@
 
 ## ติดตั้ง / Install
 
+**Option A — Claude Code plugin (recommended).** Installs the skills and all 5 agents in one step:
+
+```
+/plugin install war-room --marketplace jolynestarchaser/War-room-agent-skills
+```
+
+On Claude Code older than 2.1.275: `/plugin marketplace add jolynestarchaser/War-room-agent-skills`, then `/plugin install war-room@war-room-agent-skills`.
+As a plugin, the command is `/war-room:war-room` (e.g. `/war-room:war-room setup`). Then continue at step 2 below.
+
+**Option B — copy by hand.** The command stays `/war-room`.
+
 **1. Clone and copy** (Git Bash, macOS, Linux)
 
 ```bash
@@ -88,8 +99,13 @@ Setup installs these when missing (after asking). Credit to their authors.
 | `buddhist-method` | required | [nai0om/buddhist-method](https://github.com/nai0om/buddhist-method) (MIT) |
 | `grill-me` | optional, user-invoked | [joshuawheelock/grill-me](https://github.com/joshuawheelock/grill-me) (MIT) |
 | `chrome-devtools-cli` | optional (FBI screenshots) | Claude Code plugin [chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) |
-| `impact-analysis`, `jira-read` | required / optional | this repository |
+| `impact-analysis` | required | this repository, adapted from `blast-radius` in [pstack](https://github.com/cursor/plugins/tree/main/pstack) by Lauren Tan (MIT, notice in `skills/impact-analysis/LICENSE-pstack`) |
+| `jira-read` | optional | this repository |
 
 ## Update
 
 Pull this repository and copy the files again (step 1). Your `config.md`, `explore.md` and `tickets/` are not touched.
+
+## License
+
+MIT, see [LICENSE](LICENSE). `skills/impact-analysis` is adapted from pstack (MIT, Lauren Tan); its notice is in `skills/impact-analysis/LICENSE-pstack`.

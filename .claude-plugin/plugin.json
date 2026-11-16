@@ -1,0 +1,18 @@
+{
+  "name": "war-room",
+  "version": "0.2.0",
+  "description": "Take a Jira ticket from investigation to a reviewed change: evidence-based repo mapping, sized plan, grilled spec, subagent implementation, senior review, before/after evidence, commit only on your yes.",
+  "author": {
+    "name": "jolynestarchaser"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/jolynestarchaser/War-room-agent-skills",
+  "repository": "https://github.com/jolynestarchaser/War-room-agent-skills",
+  "keywords": [
+    "jira",
+    "code-review",
+    "planning",
+    "subagents",
+    "impact-analysis"
+  ]
+}

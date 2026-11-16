@@ -20,7 +20,7 @@ Analysis modes (read-only, steps 0–11):
 - `/war-room all`: paginate all assigned, not-Done issues, group related tickets, then investigate a bounded batch; disclose progress and unexamined tickets. Do not silently imply the full set was investigated.
 - `/war-room setup`: run only Step 0 (setup check) and stop.
 - `/war-room map`: rebuild the codebase map (`codebase_map` in config) for all repos, or for the repos named after `map`, then stop. When config says another tool maintains the map, point the user to that tool instead.
-- `/war-room maid`: run only the maid sweep (step 1) and stop. The **maid** deletes the `jira-read` downloads (`<temp>/jira-attachments/<KEY>/`) of every ticket that is Done or no longer assigned to the user: `python -I "<jira-read skill folder>/fetch_attachments.py" --maid`. Report its deleted/kept lines. Without `jira-read` installed there is nothing to sweep: report `maid: skipped (jira-read not installed)`.
+- `/war-room maid`: run only the maid sweep (step 1) and stop. The **maid** deletes the `jira-read` downloads (`<temp>/jira-attachments/<KEY>/`) of every ticket that is Done or no longer assigned to the user: `python -I "<jira-read folder>/fetch_attachments.py" --maid`, where `<jira-read folder>` is `${CLAUDE_PLUGIN_ROOT}/skills/jira-read` when War Room is installed as the plugin, else `~/.claude/skills/jira-read`. Report its deleted/kept lines. Without `jira-read` installed there is nothing to sweep: report `maid: skipped (jira-read not installed)`.
 
 Delivery modes (write, steps 12–17), each needs `tickets/<KEY>/spec.md` with `Status: approved` or later:
 
@@ -87,7 +87,7 @@ Copy this checklist into your working progress and update it only for steps actu
 
 ## Subagent coordination contract
 
-Custom agents (installed to `~/.claude/agents/`):
+Custom agents (installed to `~/.claude/agents/`, or shipped by the `war-room` plugin). Installed as the plugin, each agent's type is `war-room:<name>` (e.g. `war-room:war-room-investigator`); copied by hand, it is the bare `<name>`. Dispatch whichever form the session's agent list shows:
 
 - `war-room-investigator`: repository discovery, code evidence, ownership and cross-repo impact.
 - `war-room-diagnostician`: root-cause hypotheses, Ariyasacca-informed evidence discipline.

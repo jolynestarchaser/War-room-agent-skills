@@ -14,7 +14,7 @@ the files themselves, so screenshots and specs in a ticket get read, not guessed
    `fields: ["summary","description","comment","attachment","status"]`,
    `responseContentFormat: "markdown"`.
 2. **Files.** Run
-   `python -I "<this skill's folder>/fetch_attachments.py" <KEY>`.
+   `python -I "<this skill's folder>/fetch_attachments.py" <KEY>` (the folder this SKILL.md was loaded from).
    It prints one line per attachment, oldest first: mime type, size, created, author, local path.
    Files land in `<temp>/jira-attachments/<KEY>/`; files already downloaded are skipped.
    War Room's maid (`--maid`) deletes a ticket's folder once it is Done or no longer assigned to the user.

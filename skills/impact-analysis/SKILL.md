@@ -2,8 +2,7 @@
 name: impact-analysis
 description: Source-code blast-radius analysis before changing something other code depends on. Use when a change looks small but touches a shared table or column, an entity, DTO or API field, a route or gateway mapping, an HTTP client call, a shared constant, enum, base class, config key or generated artifact, or when the user asks "what uses this?", "what can this break?", or "is this safe to change?". Maps callers, consumers in other repositories, schemas, contracts, tests, generated artifacts and runtime behavior, and grades how well each claim is proven. Not for chaos engineering or failure injection (use chaos-engineer) and not for designing new service boundaries (use microservices-architect).
 metadata:
-  owner: local, hand-written
-  canonical-location: ~/.claude/skills/impact-analysis (a real folder, not installed from a pack and not tracked in ~/.agents/.skill-lock.json)
+  source: adapted from the `blast-radius` skill in pstack (https://github.com/cursor/plugins/tree/main/pstack), MIT, Copyright (c) 2026 Lauren Tan
 ---
 
 # Impact Analysis
