@@ -77,7 +77,7 @@ Setup interviews you (the person installing) before any investigation starts:
 | `/war-room all` | All open assigned tickets, investigated in batches |
 | `/war-room implement ABC-123` | Implement an approved spec: branches, implementers, senior review |
 | `/war-room review ABC-123` | Review the current changes against the spec (e.g. in a fresh chat) |
-| `/war-room fbi ABC-123 [before\|after]` | Before/after evidence and a verdict per acceptance criterion |
+| `/war-room fbi ABC-123 [before\|after]` | Before/after evidence and a verdict per acceptance criterion; `after` adds a QA pass (risk charters, edge cases, neighbour regression, reproduced bugs, Go/No-go) |
 | `/war-room setup` | Setup check only |
 | `/war-room map [repo ...]` | Rebuild the codebase map (all or named repos) |
 | `/war-room maid` | Delete downloaded attachments of finished tickets (needs `jira-read`) |
@@ -98,6 +98,7 @@ Setup installs these when missing (after asking). Credit to their authors.
 | `retro` | optional, user-invoked | [mattpocock/skills](https://github.com/mattpocock/skills) (MIT) |
 | `buddhist-method` | required | [nai0om/buddhist-method](https://github.com/nai0om/buddhist-method) (MIT) |
 | `grill-me` | optional, user-invoked | [joshuawheelock/grill-me](https://github.com/joshuawheelock/grill-me) (MIT) |
+| `risk-based-testing`, `exploratory-testing`, `bug-reproduction` (+ optional `qa-report-humanizer`) | required (FBI QA pass) | [petrkindlmann/qa-skills](https://github.com/petrkindlmann/qa-skills) (MIT) |
 | `chrome-devtools-cli` | optional (FBI screenshots) | Claude Code plugin [chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) |
 | `impact-analysis` | required | this repository, adapted from `blast-radius` in [pstack](https://github.com/cursor/plugins/tree/main/pstack) by Lauren Tan (MIT, notice in `skills/impact-analysis/LICENSE-pstack`) |
 | `jira-read` | optional | this repository |

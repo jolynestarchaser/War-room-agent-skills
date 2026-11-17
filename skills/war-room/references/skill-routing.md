@@ -32,6 +32,7 @@
 | 8 | Challenge the recommendation and plan | `the-fool` | Pre-mortem, hidden assumptions, missed repos |
 | 10 | Settle the open decisions before the spec | `grilling` | Design-tree rounds, each question with a recommended answer |
 | 14 | Senior review, standards axis | `code-reviewer` | Review each repo's diff; the spec axis is War Room's own AC table |
+| `fbi after` | QA pass: risks, charters, reproduced findings, plain report | `risk-based-testing`, `exploratory-testing`, `bug-reproduction`, `qa-report-humanizer` | Load in that order inside the QA pass of `references/fbi.md`; when a skill asks for `.agents/qa-project-context.md`, give it config.md and the codebase map instead of creating the file |
 | 14, `fbi` | Browser captures when the chrome-devtools MCP is not connected | `chrome-devtools-cli` | Screenshots and page scripts from the shell; see `references/fbi.md` |
 | 15 | User checks they understand the change | `grill-me` (user-invoked: suggest, never run) | Quiz on the changed code |
 | 17 | PR body draft per repo | `pr` | Summary, Evidence, Merge Danger |

@@ -73,6 +73,8 @@ A Skill counts as installed if it appears in this session's skill list (plugin s
 | `jira-read` | optional | 2 | War Room package → `skills/jira-read` (needs a Jira API token, see its SKILL.md) |
 | `microservices-architect` | optional | 6–7 | `https://github.com/jeffallan/claude-skills` → `skills/microservices-architect` |
 | `api-designer` | optional | 6–7 | `https://github.com/jeffallan/claude-skills` → `skills/api-designer` |
+| `risk-based-testing`, `exploratory-testing`, `bug-reproduction` | required | `fbi` QA pass | `https://github.com/petrkindlmann/qa-skills` → `skills/<name>` |
+| `qa-report-humanizer` | optional | `fbi` QA pass | `https://github.com/petrkindlmann/qa-skills` → `skills/qa-report-humanizer` |
 | `chrome-devtools-cli` | optional | 14, `fbi` | Claude Code plugin `chrome-devtools-mcp` (`https://github.com/ChromeDevTools/chrome-devtools-mcp`); install the plugin, not a folder copy |
 | `grill-me` | optional, user-invoked | 15 | `https://github.com/joshuawheelock/grill-me` → `skills/grill-me` |
 | `retro` | optional, user-invoked | after 17 | `https://github.com/mattpocock/skills` → `skills/engineering/retro` |
@@ -89,6 +91,8 @@ If any are missing:
    git clone --depth 1 https://github.com/mattpocock/skills.git "$tmp/mattpocock"
    cp -r "$tmp/mattpocock/skills/productivity/grilling" "$tmp/mattpocock/skills/engineering/pr" ~/.claude/skills/
    git clone --depth 1 https://github.com/nai0om/buddhist-method.git ~/.claude/skills/buddhist-method
+   git clone --depth 1 https://github.com/petrkindlmann/qa-skills.git "$tmp/qa"
+   cp -r "$tmp/qa/skills/risk-based-testing" "$tmp/qa/skills/exploratory-testing" "$tmp/qa/skills/bug-reproduction" ~/.claude/skills/
    ```
 
    For `impact-analysis` and `jira-read` without the plugin, copy `skills/<name>` from the War Room package the user downloaded. If you do not know where that is, ask.

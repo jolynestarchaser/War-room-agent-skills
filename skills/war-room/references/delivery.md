@@ -4,7 +4,7 @@ Runs after the senior review leaves the spec `in-review`. Every write here waits
 
 ## 15. Human sign-off
 
-1. Show the FBI verdict table from `tickets/<KEY>/evidence/fbi.md` (or say `fbi after: pending`), then ask the user to test what the spec's Verification section lists under "User runs by hand" and what FBI left Not verifiable; they run services themselves.
+1. Show the FBI verdict table, the QA findings and the QA sign-off from `tickets/<KEY>/evidence/fbi.md` (or say `fbi after: pending`), then ask the user to test what the spec's Verification section lists under "User runs by hand" and what FBI left Not verifiable; they run services themselves.
 2. Offer `/grill-me` (a quiz on the changed code) before they approve, so the knowledge of what the agents built stays with them. It is user-invoked; suggest it, do not run it.
 3. Changes the user asks for go back through `references/implement.md` as a fix round, then review again.
 4. Continue only when the user says the work is OK.

@@ -53,7 +53,7 @@ This session is the reviewer: the implementers' reports are claims, the diff is 
 3. **Spec axis:** build a table `AC | Met? | Evidence (file:line or check output)` and a line per task with `Done when` satisfied or not. Out-of-scope items untouched.
 4. **Checks:** confirm each check the implementer claims to have run by its reported output; rerun a cheap one (lint on changed files) yourself when the output is missing.
 5. Findings go back to the same repo's implementer as a fix round (continue it with SendMessage when available). After two fix rounds with open findings, stop and bring them to the user instead of looping.
-6. When both axes are clean, ask the user to restart the services the diff touches, then run the `after` phase of `references/fbi.md`. Each `Not met` row is a finding for step 5. When the user cannot run the app now, log `fbi after: pending` and say so in the output.
+6. When both axes are clean, ask the user to restart the services the diff touches, then run the `after` phase of `references/fbi.md`. Each `Not met` row, and each QA `Bug` rated blocker or major, is a finding for step 5; `Pre-existing` findings are reported, not fixed. When the user cannot run the app now, log `fbi after: pending` and say so in the output.
 7. When review and FBI are clean, set `Status: in-review`, log it, and continue with `references/delivery.md`.
 
 ## Output to the user after review

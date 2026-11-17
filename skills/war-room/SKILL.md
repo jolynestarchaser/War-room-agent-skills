@@ -26,7 +26,7 @@ Delivery modes (write, steps 12–17), each needs `tickets/<KEY>/spec.md` with `
 
 - `/war-room implement ISSUE-123`: prepare branches, run implementers, review, then hand to the human. Follow [references/implement.md](references/implement.md).
 - `/war-room review ISSUE-123`: review the current working-tree changes against the spec (after manual edits, or from a fresh chat), then continue with delivery. Follow [references/implement.md](references/implement.md) from its Review section.
-- `/war-room fbi ISSUE-123 [before|after]`: verify the change works, AC by AC, and keep the evidence: before and after captures (PNG, plus SVG when the source gives one) and a verdict table in `tickets/<KEY>/evidence/`. Follow [references/fbi.md](references/fbi.md).
+- `/war-room fbi ISSUE-123 [before|after]`: verify the change works, AC by AC, and keep the evidence: before and after captures (PNG, plus SVG when the source gives one) and a verdict table in `tickets/<KEY>/evidence/`. `after` then runs a QA pass as the field tester: risk charters, edge cases, neighbour regression, reproduced bug reports and a Go / No-go sign-off. Follow [references/fbi.md](references/fbi.md).
 
 Additional text in `$ARGUMENTS` can set constraints, e.g. `project=ABC`, `repo=path`, or `limit=3`; interpret as plain-language requests, not as shell code.
 
@@ -44,7 +44,7 @@ All of these hold team-specific data. Never copy them into the War Room package 
 
 1. **Read-only analysis, gated delivery.**
    - Analysis modes may fetch Jira, search repositories, inspect Git metadata (non-mutating commands only), and read files. Their only writes: Step 0's `config.md` / codebase map, a user-confirmed Skill install, the `jira-read` attachment downloads and the maid's deletions of them, and step 11's `tickets/<KEY>/spec.md`.
-   - Delivery modes start only from the user typing `/war-room implement`, `/war-room review` or `/war-room fbi` for a ticket whose spec is `approved` or later. `fbi` writes only under `tickets/<KEY>/evidence/` plus the spec's Evidence plan and Log; it starts no services, edits no code, and runs a writing action (save, submit, POST) only on the user's yes to that step. Answers to grilling questions are decisions, not a go-ahead to implement.
+   - Delivery modes start only from the user typing `/war-room implement`, `/war-room review` or `/war-room fbi` for a ticket whose spec is `approved` or later. `fbi` writes only under `tickets/<KEY>/evidence/` plus the spec's Evidence plan and Log; it starts no services, edits no code, and runs a writing action (save, submit, POST) only on the user's yes to that step, or within the one-time QA write approval described in `references/fbi.md`. Answers to grilling questions are decisions, not a go-ahead to implement.
    - In every mode: Jira stays unmodified, nothing is pushed, no PR is opened, no git worktree is created. A commit happens only after the user answers yes to the exact files and message.
 2. **No access fabrication:** If Jira auth/tooling is unavailable, report `BLOCKED — Jira unavailable` and the minimum connection steps; never invent tickets.
 3. **No invented repository matches:** Separate `Confirmed`, `Likely`, `Possible`, and `Unknown`, and cite evidence for each mapping. A filename keyword match alone is not sufficient for `Confirmed`. The codebase map is a lead, not evidence: confirm in source before citing.

@@ -56,6 +56,10 @@ Run `/war-room setup`. Every check should end `OK` or `FIXED`. War Room is user-
 | FBI tool down | `/war-room fbi ABC-123` with the chrome-devtools MCP disconnected | Tries `chrome-devtools-cli`; otherwise rows `not captured: <tool> unavailable` and asks the user for screenshots; no invented verdict |
 | FBI writing step | An Evidence plan row needs Save or a send to an external system on a shared environment | Asks first, naming the environment; on no, the row is Not verifiable |
 | FBI Not met | After capture contradicts an AC during implement | Sent back as a fix round, then `after` rerun |
+| QA pass | `/war-room fbi ABC-123 after` with all ACs Met | Top three risks from spec + diff, one charter each (about ten checks), captures under `evidence/qa/`, sign-off written |
+| QA write approval | A charter needs to save a record on dev | Asks once for environment + test records; saves within them without asking again; a shared environment or an external send still asks per step |
+| QA pre-existing | A QA finding reproduces on the base branch | Classified `Pre-existing`, reported, not fixed under the ticket |
+| QA No-go | A major `Bug` found during implement | Sign-off `No-go`; sent back as a fix round; only the failing checks and neighbours rerun |
 | Wrong branch at dispatch | Implementer brief names branch `ABC-123`, but the repo was switched to another branch between sessions | Implementer's first command is `git branch --show-current`; it stops before any edit and reports the branch it found |
 | Release ref search | Candidate repo checked out on an old ticket branch | Investigator cites `<ref>:<path>:<line>` from `git grep` / `git show` on the release ref named in its brief, not working-tree lines |
 | Pattern to copy | Ticket adds a flag like an existing one (`is_archived` after an earlier `is_hidden`) | Investigation finds the analogue commit with `git log -S` on source paths; spec Facts carry `Pattern to copy: <commit>` |

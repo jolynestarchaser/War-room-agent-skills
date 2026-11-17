@@ -2,7 +2,7 @@
 
 Used by `/war-room fbi <KEY> [before|after]`, by `references/implement.md` (a baseline after branch prep, the after pass after review) and by `references/delivery.md`.
 
-FBI checks whether the change **works**, one acceptance criterion at a time, and keeps the **evidence**: before and after captures with matching file names, plus a verdict table. Implementer reports and the senior review are claims about code; FBI's captures show behaviour.
+FBI checks whether the change **works**, one acceptance criterion at a time, and keeps the **evidence**: before and after captures with matching file names, plus a verdict table. Implementer reports and the senior review are claims about code; FBI's captures show behaviour. In `after`, FBI then works as the team's **field QA tester**: what else breaks around the change, with the data and habits real users bring, ending in a sign-off.
 
 ## Contents
 
@@ -11,6 +11,7 @@ FBI checks whether the change **works**, one acceptance criterion at a time, and
 3. [Capture by type](#capture-by-type)
 4. [Safety](#safety)
 5. [Verdict and fbi.md](#verdict-and-fbimd)
+6. [QA pass](#qa-pass)
 
 ## Phases
 
@@ -58,7 +59,7 @@ When a capture tool is unavailable, mark that row `not captured: <tool> unavaila
 
 ## Safety
 
-- FBI looks: navigation, viewing, `GET`, `SELECT`, opening a PDF. An action that writes (save, submit, `POST/PUT/DELETE`, sending to an external system, printing to a real printer) runs only after the user says yes to that exact step. On a shared environment (staging, UAT) the yes must name the environment, because its database is shared.
+- FBI looks: navigation, viewing, `GET`, `SELECT`, opening a PDF. An action that writes (save, submit, `POST/PUT/DELETE`, sending to an external system, printing to a real printer) runs only after the user says yes to that exact step; the QA pass's one-time write approval (QA pass, step 3) is the only exception. On a shared environment (staging, UAT) the yes must name the environment, because its database is shared.
 - FBI writes only under `tickets/<KEY>/evidence/` and the spec's Evidence plan and Log. It edits no code and changes no git state.
 - Evidence can show personal or customer data. It stays in the workspace folder. Uploading or attaching it (Jira, a PR, any hosted page) is the user's own action.
 
@@ -67,7 +68,7 @@ When a capture tool is unavailable, mark that row `not captured: <tool> unavaila
 Open every captured PNG with Read and compare it with the row's expected result. Write one line on what the image shows; a file that merely exists proves nothing.
 
 - **Met:** the after evidence shows the expected behaviour. A before capture showing the old behaviour makes it stronger; without one, write `no baseline`.
-- **Not met:** the after evidence contradicts the expected result. During `/war-room implement` this goes back as a fix round (`references/implement.md`, step 5 of Review), and FBI runs `after` again once the fix lands.
+- **Not met:** the after evidence contradicts the expected result. During `/war-room implement` this, like a QA `Bug` rated blocker or major, goes back as a fix round (`references/implement.md`, step 5 of Review), and FBI runs `after` again once the fix lands.
 - **Not verifiable:** the check could not run here; say why and who can run it.
 
 Write `tickets/<KEY>/evidence/fbi.md`:
@@ -84,6 +85,51 @@ Write `tickets/<KEY>/evidence/fbi.md`:
 
 ## Not verified
 - <AC or check>: <reason, who can run it>
+
+## QA pass
+| Charter | Risk | Checks run | Findings |
+|---|---|---|---|
+| C1 | <risk, impact x likelihood> | 10 | Q1 |
+
+| ID | Type | Severity | Minimal steps | Expected | Actual | Evidence |
+|---|---|---|---|---|---|---|
+| Q1 | Bug | major | 1. ... 2. ... | ... | ... | qa/C1-3-x.png |
+
+## Untested risks
+- <risk>: <why it was not explored>
+
+## Sign-off
+Go | Go with known issues | No-go: <one line why> | Not assessed: <reason>
 ```
 
-FBI is done when every AC has a row with a verdict, and every verdict cites an artifact path or the reason it is Not verifiable. Append `YYYY-MM-DD fbi <phase>: <n> Met, <n> Not met, <n> Not verifiable` to the spec's Log. Then report the table to the user in `report_language` with the evidence folder path.
+FBI is done when every AC has a row with a verdict, every verdict cites an artifact path or the reason it is Not verifiable, and (in `after`) the QA pass has a sign-off. Append `YYYY-MM-DD fbi <phase>: <n> Met, <n> Not met, <n> Not verifiable` to the spec's Log, plus `; QA <n> Bug, <n> Pre-existing, <n> Origin unknown, <n> Question, <sign-off>` after an `after` run. Then report the table to the user in `report_language` with the evidence folder path.
+
+## QA pass
+
+Runs in `after`, once every AC row has a verdict; never in `before`. The AC rows prove the change does what the spec says. The QA pass asks what else breaks around it.
+
+The QA skills work inside FBI's rules; Safety above and the bounds here win over anything in them:
+
+- `risk-based-testing`: phases 1-3 only (identify, classify, failure modes), from the spec, the diff and the map. No stakeholder interviews, no saved heatmap.
+- `exploratory-testing`: its charter template and heuristics. Facts come from the spec, not its discovery questions; the bound below replaces its 45-90 minute session.
+- `bug-reproduction`: steps 1-2 only (extract the repro; reproduce, minimize, isolate, capture). No bisect, no regression test, no code or git change: a failing test belongs to the fix round.
+
+1. **Risks.** Load `risk-based-testing`. From the spec (Facts, impact analysis, contracts), the diff (`git -C <path> diff <start>..HEAD`) and the codebase map, list what can break: the changed flow under other inputs, **neighbours** that share the changed component, endpoint, table or template, and records created before the change. Score impact x likelihood; keep the top three. The rest go under Untested risks.
+2. **Charters.** Load `exploratory-testing`. One charter per kept risk, `Explore <area> with <data or role> to discover <risk>`, about ten checks each, drawn from these lenses:
+   - input: empty, max length, long text in the users' language, special characters, boundary numbers and dates (midnight, month end, time zones);
+   - state: refresh, back, double click or double submit, two tabs, cancel halfway, a record made before the change;
+   - role: a user without the permission, a user from another team or site;
+   - failure: an error from a dependency, where the environment can show one safely;
+   - neighbours: the other screens and endpoints that share the changed code still behave.
+   A check that needs what FBI cannot do here (a second login, a fault the environment cannot produce safely) becomes Not verifiable with the steps for the user, never a silent skip.
+   Capture every check that shows something to `evidence/qa/<charter>-<n>-<slug>.png` (or `.json` / `.txt`), with the same tools as the AC rows.
+3. **Writes.** Before the first charter, ask once, naming the database the app writes to (a local app can point at a shared database; that counts as the shared environment): `QA writes on <environment> (database: <name/host>) with <test records>: yes?` A yes covers saves, submits and cancels on that environment with those records only. A shared environment (staging, UAT) still asks per step, and sending to an external system (payment, SMS or email, a third-party API, a real printer) always asks per step. Without the yes, write checks become Not verifiable with steps for the user.
+4. **Findings.** For anything wrong, load `bug-reproduction` and reproduce it twice with minimal steps before reporting it. Classify each:
+   - `Bug`: caused by this change (absent in the before evidence or on the base);
+   - `Pre-existing`: reproduces on the base too; report it, do not fix it under this ticket;
+   - `Origin unknown`: no before evidence covers it and no base is reachable. The base is checked only on an environment from `environments` in config.md that does not have the change or in the before captures, never by checking out, stashing or resetting;
+   - `Question`: the spec is silent; the user decides.
+   Severity is one word plus the user impact: blocker, major, minor or cosmetic.
+5. **Sign-off.** `Go`, `Go with known issues` (only minor or cosmetic Bugs, or Pre-existing, open), or `No-go` (any blocker or major Bug, or a Not met AC). When the pass could not run (no app, no browser, no test data), write `Not assessed: <reason>`; never Go by default. Write findings plainly, `qa-report-humanizer` when installed: what breaks, how to reproduce it, who is affected.
+
+Bounded: three charters, one session. After a fix round, rerun only the failing checks and the neighbours of the fix, not the whole pass.
